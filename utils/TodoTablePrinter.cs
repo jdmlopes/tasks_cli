@@ -4,9 +4,9 @@ namespace tasks_cli.utils;
 public static class TodoTablePrinter
 {
     private const int IdWidth = 4;
-    private const int DescWidth = 35;
+    private const int DescWidth = 32;
     private const int StatusWidth = 15;
-    private const int DateWidth = 30;
+    private const int DateWidth = 22;
 
     public static void PrintTable(IEnumerable<Todo> todos)
     {
@@ -60,7 +60,7 @@ public static class TodoTablePrinter
         int pending = list.Count(t => t.Status == TodoStatus.todo);
 
         Console.ForegroundColor = ConsoleColor.DarkGray;
-        Console.WriteLine($"{list.Count} todos  |  {done} done  |  {inProg} in progress  |  {pending} pending");
+        Console.WriteLine($"{list.Count} tasks  |  {done} done  |  {inProg} in progress  |  {pending} pending");
         Console.ForegroundColor = prevColor;
     }
 

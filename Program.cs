@@ -20,6 +20,25 @@ listTasks.Aliases.Add("ls");
 listTasks.SetAction(result => TasksController.ListTasks());
 root.Subcommands.Add(listTasks);
 
+//Update Task Command
+Command updateTask = new Command("update","Update a task with a new description");
+updateTask.Aliases.Add("upd");
+Argument<int> idToUpdate = new("update-id")
+{
+    Description = "Id of the task that will be updated"
+};
+Argument<string> newDescription = new("new-description")
+{
+    Description = "New description of the task"
+};
+updateTask.Arguments.Add(idToUpdate);
+updateTask.Arguments.Add(newDescription);
+updateTask.SetAction(result => TasksController.UpdateTask(
+    result.GetValue(idToUpdate),
+    result.GetValue(newDescription)
+));
+root.Subcommands.Add(updateTask);
+
 
 ParseResult parseResult = root.Parse(args);
 return parseResult.Invoke();

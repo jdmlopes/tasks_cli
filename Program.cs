@@ -1,16 +1,21 @@
 ﻿using System.CommandLine;
+using tasks_cli.controller;
 
 RootCommand root = new RootCommand("Task tracker that runs on the terminal");
 
-Argument<string> defaultArgument = new("def")
+
+
+Command addTask = new Command("add", "Adds a new task to the list");
+
+Argument<string> taskDescription = new("task-description")
 {
-    Description = "TODO: build a cli task tracker",
-    DefaultValueFactory = result => "I don't do anything yet"
+    Description = "Description of the task"
 };
 
-root.Arguments.Add(defaultArgument);
+addTask.Arguments.Add(taskDescription);
+addTask.SetAction(result => TasksController.AddTask(result.GetValue(taskDescription)));
 
-root.SetAction(parseResult => Console.WriteLine(parseResult.GetValue(defaultArgument)));
+root.Subcommands.Add(addTask);
 
 ParseResult parseResult = root.Parse(args);
 return parseResult.Invoke();

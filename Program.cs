@@ -39,6 +39,19 @@ updateTask.SetAction(result => TasksController.UpdateTask(
 ));
 root.Subcommands.Add(updateTask);
 
+//Delete Task Command
+Command deleteTask = new Command("delete","Update a task with a new description");
+deleteTask.Aliases.Add("del");
+Argument<int> idToDelete = new("delete-id")
+{
+    Description = "Id of the task that will be deleted"
+};
+deleteTask.Arguments.Add(idToDelete);
+deleteTask.SetAction(result => TasksController.DeleteTask(
+    result.GetValue(idToDelete)
+));
+root.Subcommands.Add(deleteTask);
+
 
 ParseResult parseResult = root.Parse(args);
 return parseResult.Invoke();

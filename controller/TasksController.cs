@@ -77,4 +77,26 @@ public class TasksController
             Console.WriteLine($"[ERROR] Something went wrong: {ex.Message}");
         }
     }
+
+    public static void DeleteTask(int id)
+    {
+        try
+        {
+            TodoDTO todoDTO = JsonController.GetTasksFromJson();
+            List<Todo> todos = todoDTO.Todos;
+            int i = todos.FindIndex(t => t.Id == id);
+            if(i == -1)
+            {
+                Console.WriteLine($"[ERROR] Task with id {id} doesn't exist");
+                return;
+            }
+            todos.RemoveAt(i);
+            JsonController.SaveTasksInJson(todos, todoDTO.LastId);
+            Console.WriteLine($"Task deleted successfully (ID: {id})");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"[ERROR] Something went wrong: {ex.Message}");
+        }
+    }
 }

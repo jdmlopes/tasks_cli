@@ -21,6 +21,20 @@ listTasks.Aliases.Add("ls");
 listTasks.SetAction(result => TasksController.ListTasks());
 root.Subcommands.Add(listTasks);
 
+// Show task command
+Command getTask = new Command("get", "Display the task details of the informed task id");
+getTask.Aliases.Add("see");
+getTask.Aliases.Add("show");
+Argument<int> idToGet = new("get-id")
+{
+    Description = "Id of the task that will be displayed"
+};
+getTask.Arguments.Add(idToGet);
+getTask.SetAction(result => TasksController.GetTaskById(
+    result.GetValue(idToGet)
+));
+root.Subcommands.Add(getTask);
+
 //Update Task Command
 Command updateTask = new Command("update", "Update a task with a new description");
 updateTask.Aliases.Add("upd");

@@ -49,6 +49,27 @@ public class TasksController
         }
     }
 
+    public static void GetTaskById(int id)
+    {
+        try
+        {
+            TodoDTO todoDTO = JsonController.GetTasksFromJson();
+            List<Todo> todos = todoDTO.Todos;
+            Todo? todo = todos.Find(t => t.Id == id);
+            if(todo is null)
+            {
+                Console.WriteLine($"[ERROR] Task with id {id} doesn't exist");
+                return;
+            }
+            Console.WriteLine(todo.ToString());
+
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"[ERROR] Something went wrong: {ex.Message}");
+        }
+    }
+
     public static void UpdateTask(int id, string? newDescription)
     {
         if(string.IsNullOrEmpty(newDescription))

@@ -29,7 +29,7 @@ public static class TodoTablePrinter
             {
                 TodoStatus.done       => ("[X] done",       ConsoleColor.DarkGreen),
                 TodoStatus.inProgress => ("[-] in progress", ConsoleColor.DarkYellow),
-                TodoStatus.todo       => ("[ ] pending",        ConsoleColor.DarkBlue),
+                TodoStatus.pending       => ("[ ] pending",        ConsoleColor.DarkBlue),
                 _                    => (todo.Status.ToString(), prevColor)
             };
 
@@ -57,7 +57,7 @@ public static class TodoTablePrinter
 
         int done   = list.Count(t => t.Status == TodoStatus.done);
         int inProg = list.Count(t => t.Status == TodoStatus.inProgress);
-        int pending = list.Count(t => t.Status == TodoStatus.todo);
+        int pending = list.Count(t => t.Status == TodoStatus.pending);
 
         Console.ForegroundColor = ConsoleColor.DarkGray;
         Console.WriteLine($"{list.Count} tasks  |  {done} done  |  {inProg} in progress  |  {pending} pending");

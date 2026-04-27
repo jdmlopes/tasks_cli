@@ -13,7 +13,7 @@ public class Todo
 
 [JsonConverter(typeof(JsonStringEnumConverter))]
 public enum TodoStatus{
-    todo,
+    pending,
     inProgress,
     done
 }

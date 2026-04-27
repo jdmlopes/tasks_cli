@@ -23,7 +23,7 @@ public class TasksController
                 Description = taskDescription,
                 CreatedAt = DateTime.Now,
                 UpdatedAt = DateTime.Now,
-                Status = TodoStatus.todo
+                Status = TodoStatus.pending
             };
             todos.Add(todo);
             JsonController.SaveTasksInJson(todos, lastId);
@@ -93,6 +93,35 @@ public class TasksController
             todos.RemoveAt(i);
             JsonController.SaveTasksInJson(todos, todoDTO.LastId);
             Console.WriteLine($"Task deleted successfully (ID: {id})");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"[ERROR] Something went wrong: {ex.Message}");
+        }
+    }
+
+    public static void UpdateTaskStatus(int id, TodoStatus status)
+    {
+        if(!Enum.IsDefined(status))
+        {
+            Console.WriteLine("[ERROR] This status doesn't exist");
+            return;
+        }
+        try
+        {
+            TodoDTO todoDTO = JsonController.GetTasksFromJson();
+            List<Todo> todos = todoDTO.Todos;
+            int i = todos.FindIndex(t => t.Id == id);
+            if(i == -1)
+            {
+                Console.WriteLine($"[ERROR] Task with id {id} doesn't exist");
+                return;
+            }
+
+            todos[i].Status = status;
+            todos[i].UpdatedAt = DateTime.Now;
+            JsonController.SaveTasksInJson(todos, todoDTO.LastId);
+            Console.WriteLine($"Task Status updated successfully (ID: {id})");
         }
         catch (Exception ex)
         {

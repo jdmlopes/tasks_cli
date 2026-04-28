@@ -18,7 +18,25 @@ root.Subcommands.Add(addTask);
 // List Tasks Command
 Command listTasks = new Command("list", "List all tasks");
 listTasks.Aliases.Add("ls");
-listTasks.SetAction(result => TasksController.ListTasks());
+Option<string> filterByStatus = new("--filter", "-f")
+{
+    Description = "filter by status (pending, inProgress, done)"
+};
+listTasks.Options.Add(filterByStatus);
+listTasks.Validators.Add(result =>
+{
+    string? status = result.GetValue(filterByStatus);
+    if(status is null)
+        return;
+    if(status != "pending" && status != "inProgress" && status != "done")
+        result.AddError("Status provided is not valid"); 
+});
+listTasks.SetAction(result => 
+    TasksController.ListTasks(result.GetValue(filterByStatus) is not null ?
+        Enum.Parse<TodoStatus>(result.GetValue(filterByStatus)!)
+        : null
+    )
+);
 root.Subcommands.Add(listTasks);
 
 // Show task command

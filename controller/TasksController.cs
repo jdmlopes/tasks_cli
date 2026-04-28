@@ -35,12 +35,14 @@ public class TasksController
         }
     }
 
-    public static void ListTasks()
+    public static void ListTasks(TodoStatus? statusFilter = null)
     {
         try
         {
             TodoDTO todoDTO = JsonController.GetTasksFromJson();
             List<Todo> todos = todoDTO.Todos;
+            if(statusFilter is not null)
+                todos = [.. todos.Where(t => t.Status == statusFilter)];
             TodoTablePrinter.PrintTable(todos);
         }
         catch (Exception ex)

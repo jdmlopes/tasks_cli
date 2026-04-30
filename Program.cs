@@ -88,8 +88,7 @@ updateTask.SetAction(result => TasksController.UpdateTask(
 root.Subcommands.Add(updateTask);
 
 //Update Status Task Command
-Command updateStatus = new Command("status", "Marks a task status as done, pending or in progress");
-updateStatus.Aliases.Add("stat");
+Command updateStatus = new Command("mark", "Marks a task status as done, pending or in progress");
 Argument<int> idToUpdateStatus = new("update-id")
 {
     Description = "Id of the task that will be updated"

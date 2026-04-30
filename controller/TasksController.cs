@@ -7,7 +7,7 @@ public class TasksController
 {
     public static void AddTask(string? taskDescription)
     {
-        if(string.IsNullOrEmpty(taskDescription))
+        if (string.IsNullOrEmpty(taskDescription))
         {
             Console.WriteLine("[ERROR] No task description was provided");
             return;
@@ -35,14 +35,19 @@ public class TasksController
         }
     }
 
-    public static void ListTasks(TodoStatus? statusFilter = null)
+    public static void ListTasks(bool filterDone, bool filterInProgress, bool filterPending, bool sortLatest)
     {
         try
         {
             TodoDTO todoDTO = JsonController.GetTasksFromJson();
             List<Todo> todos = todoDTO.Todos;
-            if(statusFilter is not null)
-                todos = [.. todos.Where(t => t.Status == statusFilter)];
+            List<TodoStatus> filters = new();
+            if(filterDone) filters.Add(TodoStatus.done);
+            if(filterInProgress) filters.Add(TodoStatus.inProgress);
+            if(filterPending) filters.Add(TodoStatus.pending);
+            todos = todos.Where(t => filters.Contains(t.Status)).ToList();
+            if(sortLatest)
+                todos = todos.OrderByDescending(t => t.UpdatedAt).ToList();
             TodoTablePrinter.PrintTable(todos);
         }
         catch (Exception ex)
@@ -58,7 +63,7 @@ public class TasksController
             TodoDTO todoDTO = JsonController.GetTasksFromJson();
             List<Todo> todos = todoDTO.Todos;
             Todo? todo = todos.Find(t => t.Id == id);
-            if(todo is null)
+            if (todo is null)
             {
                 Console.WriteLine($"[ERROR] Task with id {id} doesn't exist");
                 return;
@@ -74,7 +79,7 @@ public class TasksController
 
     public static void UpdateTask(int id, string? newDescription)
     {
-        if(string.IsNullOrEmpty(newDescription))
+        if (string.IsNullOrEmpty(newDescription))
         {
             Console.WriteLine("[ERROR] No task description was provided");
             return;
@@ -84,7 +89,7 @@ public class TasksController
             TodoDTO todoDTO = JsonController.GetTasksFromJson();
             List<Todo> todos = todoDTO.Todos;
             int i = todos.FindIndex(t => t.Id == id);
-            if(i == -1)
+            if (i == -1)
             {
                 Console.WriteLine($"[ERROR] Task with id {id} doesn't exist");
                 return;
@@ -108,7 +113,7 @@ public class TasksController
             TodoDTO todoDTO = JsonController.GetTasksFromJson();
             List<Todo> todos = todoDTO.Todos;
             int i = todos.FindIndex(t => t.Id == id);
-            if(i == -1)
+            if (i == -1)
             {
                 Console.WriteLine($"[ERROR] Task with id {id} doesn't exist");
                 return;
@@ -125,7 +130,7 @@ public class TasksController
 
     public static void UpdateTaskStatus(int id, TodoStatus status)
     {
-        if(!Enum.IsDefined(status))
+        if (!Enum.IsDefined(status))
         {
             Console.WriteLine("[ERROR] This status doesn't exist");
             return;
@@ -135,7 +140,7 @@ public class TasksController
             TodoDTO todoDTO = JsonController.GetTasksFromJson();
             List<Todo> todos = todoDTO.Todos;
             int i = todos.FindIndex(t => t.Id == id);
-            if(i == -1)
+            if (i == -1)
             {
                 Console.WriteLine($"[ERROR] Task with id {id} doesn't exist");
                 return;

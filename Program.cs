@@ -18,25 +18,40 @@ root.Subcommands.Add(addTask);
 // List Tasks Command
 Command listTasks = new Command("list", "List all tasks");
 listTasks.Aliases.Add("ls");
-Option<string> filterByStatus = new("--filter", "-f")
+Option<bool> filterDone = new("--done", "-d")
 {
-    Description = "filter by status (pending, inProgress, done)"
+    Description = "Filter tasks that are done"
 };
-listTasks.Options.Add(filterByStatus);
-listTasks.Validators.Add(result =>
+Option<bool> filterInProgress = new("--inprogress", "-ip")
 {
-    string? status = result.GetValue(filterByStatus);
-    if(status is null)
-        return;
-    if(status != "pending" && status != "inProgress" && status != "done")
-        result.AddError("Status provided is not valid"); 
+    Description = "filter tasks that are in progress"
+};
+Option<bool> filterPending = new("--pending", "-p")
+{
+    Description = "filter task that are pending"
+};
+Option<bool> sortLatest = new("--latest", "-l")
+{
+    Description = "filter task that are pending"
+};
+listTasks.Options.Add(filterDone);
+listTasks.Options.Add(filterInProgress);
+listTasks.Options.Add(filterPending);
+listTasks.Options.Add(sortLatest);
+listTasks.SetAction(result =>
+{
+    bool fdone = result.GetValue(filterDone);
+    bool fInProgress  = result.GetValue(filterInProgress);
+    bool fPending = result.GetValue(filterPending);
+    bool sLatest = result.GetValue(sortLatest);
+    if(!result.GetValue(filterDone) &&
+        !result.GetValue(filterInProgress) &&
+        !result.GetValue(filterPending))
+    {
+        fdone = fInProgress = fPending = true;
+    }
+    TasksController.ListTasks(fdone,fInProgress,fPending, sLatest);
 });
-listTasks.SetAction(result => 
-    TasksController.ListTasks(result.GetValue(filterByStatus) is not null ?
-        Enum.Parse<TodoStatus>(result.GetValue(filterByStatus)!)
-        : null
-    )
-);
 root.Subcommands.Add(listTasks);
 
 // Show task command
@@ -105,9 +120,9 @@ updateStatus.Validators.Add(result =>
     if (result.GetValue(markPending))
         count++;
 
-    if(count == 0)
+    if (count == 0)
         result.AddError("[ERROR] one option must be selected (--pending, --inprogress or --done)");
-    if(count > 1)
+    if (count > 1)
         result.AddError("[ERROR] too many options selected, choose only one (--pending, --inprogress or --done)");
 });
 updateStatus.SetAction(result => TasksController.UpdateTaskStatus(
